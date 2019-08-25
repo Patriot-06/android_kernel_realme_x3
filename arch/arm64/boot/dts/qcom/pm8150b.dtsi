@@ -605,6 +605,7 @@
 			#size-cells = <1>;
 			qcom,pmic-revid = <&pm8150b_revid>;
 			qcom,pmic-pbs = <&pm8150b_pbs1>;
+                        qcom,soc-hi-res;
 //#ifndef VENDOR_EDIT
 /* tongfeng.Huang@BSP.CHG.Basic, 2018/11/07,  Delete for charging */
 		//	status = "okay";
