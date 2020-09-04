@@ -25,12 +25,6 @@ static unsigned int input_boost_freq_big __read_mostly =
 	CONFIG_INPUT_BOOST_FREQ_PERF;
 static unsigned int input_boost_freq_prime __read_mostly =
 	CONFIG_INPUT_BOOST_FREQ_PRIME;
-static unsigned int max_boost_freq_little __read_mostly =
-	CONFIG_MAX_BOOST_FREQ_LP;
-static unsigned int max_boost_freq_big __read_mostly =
-	CONFIG_MAX_BOOST_FREQ_PERF;
-static unsigned int max_boost_freq_prime __read_mostly =
-	CONFIG_MAX_BOOST_FREQ_PRIME;
 
 static unsigned short input_boost_duration __read_mostly =
 	CONFIG_INPUT_BOOST_DURATION_MS;
@@ -40,9 +34,6 @@ static unsigned short wake_boost_duration __read_mostly =
 module_param(input_boost_freq_little, uint, 0644);
 module_param(input_boost_freq_big, uint, 0644);
 module_param(input_boost_freq_prime, uint, 0644);
-module_param(max_boost_freq_little, uint, 0644);
-module_param(max_boost_freq_big, uint, 0644);
-module_param(max_boost_freq_prime, uint, 0644);
 
 module_param(input_boost_duration, short, 0644);
 module_param(wake_boost_duration, short, 0644);
@@ -88,20 +79,6 @@ static unsigned int get_input_boost_freq(struct cpufreq_policy *policy)
 		freq = input_boost_freq_big;
 	else
 		freq = input_boost_freq_prime;
-
-	return min(freq, policy->max);
-}
-
-static unsigned int get_max_boost_freq(struct cpufreq_policy *policy)
-{
-	unsigned int freq;
-
-	if (cpumask_test_cpu(policy->cpu, cpu_lp_mask))
-		freq = max_boost_freq_little;
-	else if (cpumask_test_cpu(policy->cpu, cpu_perf_mask))
-		freq = max_boost_freq_big;
-	else
-		freq = max_boost_freq_prime;
 
 	return min(freq, policy->max);
 }
@@ -245,7 +222,7 @@ static int cpu_notifier_cb(struct notifier_block *nb, unsigned long action,
 
 	/* Boost CPU to max frequency for max boost */
 	if (test_bit(MAX_BOOST, &b->state)) {
-		policy->min = get_max_boost_freq(policy);
+		policy->min = policy->cpuinfo.max_freq;
 		return NOTIFY_OK;
 	}
 
