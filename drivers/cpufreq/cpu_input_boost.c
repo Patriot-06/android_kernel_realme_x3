@@ -47,6 +47,9 @@ module_param(max_boost_freq_prime, uint, 0644);
 module_param(input_boost_duration, short, 0644);
 module_param(wake_boost_duration, short, 0644);
 
+static bool input_boost_enable = true;
+module_param(input_boost_enable, bool, 0644);
+
 enum {
 	SCREEN_OFF,
 	INPUT_BOOST,
@@ -131,7 +134,7 @@ static void __cpu_input_boost_kick(struct boost_drv *b)
 	if (test_bit(SCREEN_OFF, &b->state))
 		return;
 
-	if (!input_boost_duration)
+	if (!input_boost_duration || !input_boost_enable)
 		return;
 
 	set_bit(INPUT_BOOST, &b->state);
