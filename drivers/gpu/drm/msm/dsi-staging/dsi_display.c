@@ -6737,7 +6737,7 @@ int dsi_display_validate_mode_change(struct dsi_display *display,
 			#ifdef OPLUS_BUG_STABILITY
 			/*liping-m@PSW.MM.Display.LCD,2019/6/20,for 90FPS LCD */
 			if (cur_mode->timing.refresh_rate != adj_mode->timing.refresh_rate) {
-				pr_debug("dsi_cmd set fps: %d\n", adj_mode->timing.refresh_rate);
+				pr_err("dsi_cmd set fps: %d\n", adj_mode->timing.refresh_rate);
 				WRITE_ONCE(cur_refresh_rate, adj_mode->timing.refresh_rate);
 			}
 			#endif /*OPLUS_BUG_STABILITY*/
