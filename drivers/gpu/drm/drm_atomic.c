@@ -32,6 +32,7 @@
 #include <drm/drm_print.h>
 #include <linux/pm_qos.h>
 #include <linux/sync_file.h>
+#include <linux/kprofiles.h>
 
 #include "drm_crtc_internal.h"
 
@@ -2247,6 +2248,18 @@ static int __drm_mode_atomic_ioctl(struct drm_device *dev, void *data,
 	if ((arg->flags & DRM_MODE_ATOMIC_TEST_ONLY) &&
 			(arg->flags & DRM_MODE_PAGE_FLIP_EVENT))
 		return -EINVAL;
+
+	if (!(arg->flags & DRM_MODE_ATOMIC_TEST_ONLY)) {
+	  if (active_mode() == 2) {
+	    devfreq_boost_kick_max(DEVFREQ_CPU_LLCC_DDR_BW, 25);
+	    cpu_input_boost_kick_max(25);
+	  } else if ((active_mode() == 3) || (active_mode() == 0)) {
+	    devfreq_boost_kick_max(DEVFREQ_CPU_LLCC_DDR_BW, 50);
+	    cpu_input_boost_kick_max(50);
+	  } else {
+	    pr_info("Battery profile detected! Skipping CPU & DDR bus boosts\n");
+	  }
+	}
 
 	drm_modeset_acquire_init(&ctx, 0);
 
