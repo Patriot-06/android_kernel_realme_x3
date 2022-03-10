@@ -5,7 +5,7 @@
 SECONDS=0 # builtin bash timer
 ZIPNAME="Origin-X3-S-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="$HOME/Atom-X-clang"
-DEFCONFIG="vendor/x3-perf_defconfig"
+DEFCONFIG="x3_defconfig"
 
 export PATH="$TC_DIR/bin:$PATH"
 
