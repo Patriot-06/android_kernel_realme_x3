@@ -11,7 +11,7 @@ export PATH="$TC_DIR/bin:$PATH"
 
 if ! [ -d "$TC_DIR" ]; then
 	echo "Atom-X clang not found! Cloning to $TC_DIR..."
-	if ! git clone https://gitlab.com/ElectroPerf/atom-x-clang.git "$TC_DIR"; then
+	if ! git clone --depth=1 https://gitlab.com/ElectroPerf/atom-x-clang.git "$TC_DIR"; then
 		echo "Cloning failed! Aborting..."
 		exit 1
 	fi
