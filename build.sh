@@ -54,6 +54,7 @@ if [ -f "$kernel" ] && [ -f "$dtb" ] && [ -f "$dtbo" ]; then
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 	echo "Zip: $ZIPNAME"
 	gdrive upload --share "$ZIPNAME"
+	curl --upload-file "$ZIPNAME" https://free.keep.sh
 	echo
 else
 	echo -e "\nCompilation failed!"
