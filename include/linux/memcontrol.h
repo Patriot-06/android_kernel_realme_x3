@@ -156,6 +156,15 @@ enum memcg_kmem_state {
 	KMEM_ONLINE,
 };
 
+#if defined(CONFIG_SMP)
+struct memcg_padding {
+	char x[0];
+} ____cacheline_internodealigned_in_smp;
+#define MEMCG_PADDING(name)      struct memcg_padding name;
+#else
+#define MEMCG_PADDING(name)
+#endif
+
 struct lru_gen_mm_list;
 
 /*
@@ -235,11 +244,15 @@ struct mem_cgroup {
 	 */
 	atomic_t		moving_account;
 	struct task_struct	*move_lock_task;
-	unsigned long		move_lock_flags;
-	/*
-	 * percpu counter.
-	 */
+
+	/* memory.stat */
 	struct mem_cgroup_stat_cpu __percpu *stat_cpu;
+
+	MEMCG_PADDING(_pad2_);
+
+	atomic_long_t		stat[MEMCG_NR_STAT];
+	atomic_long_t		events[NR_VM_EVENT_ITEMS];
+	atomic_long_t memory_events[MEMCG_NR_MEMORY_EVENTS];
 
 	unsigned long		socket_pressure;
 
@@ -285,6 +298,11 @@ struct mem_cgroup {
 #define MEMCG_CHARGE_BATCH 32U
 
 extern struct mem_cgroup *root_mem_cgroup;
+
+static inline bool mem_cgroup_is_root(struct mem_cgroup *memcg)
+{
+	return (memcg == root_mem_cgroup);
+}
 
 static inline bool mem_cgroup_disabled(void)
 {
@@ -472,18 +490,6 @@ unsigned long mem_cgroup_get_limit(struct mem_cgroup *memcg);
 
 void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
 				struct task_struct *p);
-
-static inline void mem_cgroup_enter_user_fault(void)
-{
-	WARN_ON(current->in_user_fault);
-	current->in_user_fault = 1;
-}
-
-static inline void mem_cgroup_exit_user_fault(void)
-{
-	WARN_ON(!current->in_user_fault);
-	current->in_user_fault = 0;
-}
 
 static inline bool task_in_memcg_oom(struct task_struct *p)
 {
@@ -748,6 +754,11 @@ static inline void mem_cgroup_put(struct mem_cgroup *memcg)
 #define MEM_CGROUP_ID_MAX	0
 
 struct mem_cgroup;
+
+static inline bool mem_cgroup_is_root(struct mem_cgroup *memcg)
+{
+	return true;
+}
 
 static inline bool mem_cgroup_disabled(void)
 {
