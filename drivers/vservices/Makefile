@@ -1,5 +1,5 @@
-ccflags-y += -Werror
 ccflags-$(CONFIG_VSERVICES_DEBUG) += -DDEBUG
+ccflags-y := -Wno-unused-but-set-variable
 
 obj-$(CONFIG_VSERVICES_SUPPORT)	+= vservices.o
 vservices-objs-$(CONFIG_VSERVICES_CHAR_DEV) += devio.o
