@@ -4,14 +4,14 @@
 
 SECONDS=0 # builtin bash timer
 ZIPNAME="Origin-X3-S-$(date '+%Y%m%d-%H%M').zip"
-TC_DIR="$HOME/Atom-X-clang"
+TC_DIR="$HOME/proton-clang"
 DEFCONFIG="x3_defconfig"
 
 export PATH="$TC_DIR/bin:$PATH"
 
 if ! [ -d "$TC_DIR" ]; then
-	echo "Atom-X clang not found! Cloning to $TC_DIR..."
-	if ! git clone --depth=1 https://gitlab.com/ElectroPerf/atom-x-clang.git "$TC_DIR"; then
+	echo "proton clang not found! Cloning to $TC_DIR..."
+	if ! git clone --depth=1 https://github.com/kdrag0n/proton-clang.git "$TC_DIR"; then
 		echo "Cloning failed! Aborting..."
 		exit 1
 	fi
